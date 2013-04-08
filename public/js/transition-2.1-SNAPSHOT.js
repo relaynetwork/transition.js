@@ -698,7 +698,7 @@
 
     fail: function () {
       var failedTests = models.suiteRunner.get('failedTests');
-      console.log('*** ADDED A FAILED TEST TO THE LOG ***'); 
+      console.log('Failing test: ' + this.get('test').get('name'));
       if (failedTests[failedTests.length-1] != this.get('test')) {
         models.suiteRunner.get('failedTests').push(this.get('test'));
       }
