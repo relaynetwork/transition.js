@@ -51,11 +51,11 @@ def install_phantom
 end
 
 
-desc "run jslintrb on js files"
+desc "run jslint on js files"
 task :lint do
   %w[examples/todo-sinatra/public/test-suite.js].concat(Dir["public/js/transition*.js"]).each do |f|
-    puts "jslintrb: #{f}"
-    res = system "jslintrb", f
+    puts "jslint: #{f}"
+    res = system "jslint", f
     unless res
       $stderr.puts "JSLINT FAILED: #{f}".red
     end
@@ -65,7 +65,7 @@ end
 namespace :jslint do
   desc "watch a file" 
   task :watch, :file do |t,args|
-    system "watch", "-d", "-n2", "jslintrb", args[:file]
+    system "watch", "-d", "-n2", "jslint", args[:file]
   end
 end
 
