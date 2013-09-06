@@ -1,4 +1,4 @@
-/*jslint browser: true, maxerr: 50, indent: 2, nomen: false, regexp: false, newcap:false */
+/*jslint browser: true, maxerr: 50, indent: 2, nomen: true, regexp: false, newcap:false */
 /*global window, jQuery, _, Backbone, console, sprintf */
 "use strict";
 
@@ -505,7 +505,6 @@
       this.set('currStateNumber', 0);
       this.set('state',           attributes.test.getState('start'));
       this.set('visited',         []);
-      //this.set('failedTests',     []);
     },
 
     visited: function (name) {
@@ -1210,7 +1209,7 @@
     }
 
     if (Transition.testRunner.elapsedTime() >= (Transition.testRunner.get('test').get('testTimeout') || models.settings.get('testTimeout'))) {
-      Log.fatal('Test timed out at ' + ((Transition.testRunner.get('test').get('testTimeout') || models.settings.get('testTimeout')) / 1000) + ' seconds');
+      Log.info('Test timed out at ' + ((Transition.testRunner.get('test').get('testTimeout') || models.settings.get('testTimeout')) / 1000) + ' seconds');
       Transition.testRunner.fail();
       return;
     }
@@ -1249,14 +1248,12 @@
       if (models.suiteRunner.elapsedTime() >= models.settings.get('suiteTimeout')) {
         Log.fatal('Suite timed out at ' + (models.settings.get('suiteTimeout') / 1000) + ' seconds');
         Transition.stop();
+        Log.info('Suite Runner calling testRunner.fail()');
         Transition.testRunner.fail();
         models.suiteRunner.set('numFailed', 1 + models.suiteRunner.get('numFailed'));
         Transition.suiteRunning = false;
         models.suiteRunner.set('suiteFinished', true);
         return;
-      }
-      else {
-        console.log('Suite has not yet timed out after ' + models.suiteRunner.elapsedTime() + ' < ' + (models.settings.get('suiteTimeout')));
       }
 
       if (Transition.testRunner.elapsedTime() >= models.settings.get('testTimeout')) {
@@ -1274,17 +1271,6 @@
         Log.info('Suite Completed');
         Transition.suiteRunning = false;
         models.suiteRunner.set('suiteFinished', true);
-
-        // Log out which tests failed (if any):
-        if (models.suiteRunner.get('failedTests').length > 0) {
-          var failedTests = models.suiteRunner.get('failedTests');
-          for (var i = 0; i < failedTests.length; i++) {
-            Log.error(' --> ' + failedTests[i].attributes.name);
-          }
-          Log.error('\n\nThe following tests failed:');
-        }
-
-        return;
       }
 
       if (Transition.testRunner.get('isDone')) {
@@ -1306,6 +1292,16 @@
         }
 
         Log.info('Suite Completed');
+        
+        // Log out which tests failed (if any):
+        if (models.suiteRunner.get('failedTests').length > 0) {
+          var failedTests = models.suiteRunner.get('failedTests');
+          for (var i = 0; i < failedTests.length; i++) {
+            Log.error(' --> ' + failedTests[i].attributes.name);
+          }
+          Log.error('\n\nThe following tests failed:');
+        }
+
         Transition.suiteRunning = false;
         models.suiteRunner.set('suiteFinished', true);
 
