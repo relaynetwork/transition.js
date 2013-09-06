@@ -160,8 +160,7 @@
       try {
         Log.trace("calling onEnter trigger %s.%s", this.get('name'), fnName);
         onEnter.call(test, args);
-      }
-      catch (e) {
+      } catch (e) {
         console.log("Error calling onEnter trigger %o.%o", this.get('name'), fnName, e);
         Log.error("Error calling onEnter trigger %s.%s", this.get('name'), fnName, e);
       }
@@ -526,8 +525,7 @@
       try {
         this.get('test').get('initialize').call(this.get('state'));
         this.get('state').callOnEnter(this.get('test'), this.get('state'));
-      }
-      catch (e) {
+      } catch (e) {
         console.error('Error initialzing test or calling onEnter!');
         console.error(e);
         this.set('error', e);
@@ -537,11 +535,11 @@
 
     transition: function () {
       var dests = [],
-          test  = this.get('test'),
-          state = this.get('state'),
-          error,
-          self = this,
-          toStatesTried = [];
+        test  = this.get('test'),
+        state = this.get('state'),
+        error,
+        self = this,
+        toStatesTried = [];
 
       if (state.get('attrs').success || state.get('attrs').failure) {
         this.set('isDone', true);
@@ -569,29 +567,26 @@
           if (pred.toString().indexOf("!") === 0) {
             predName = pred.toString().substring(1);
             pfn      = test.attributes[predName];
-            if ( typeof pfn === "undefined") {
+            if (typeof pfn === "undefined") {
               // treat as a jquery selector
               pred = Transition.elementNotExists_(predName);
-            }
-            else {
+            } else {
               // it's a function on the class
               pred     = function (state, tr) {
                 return !pfn.call(this, state, tr);
               };
             }
-          }
-          else {
+          } else {
             predName = pred.toString();
             pfn = test.attributes[predName];
-            if ( typeof pfn === "undefined") {
+            if (typeof pfn === "undefined") {
               // treat as a jquery selector
               pred = Transition.elementExists_(predName);
-            }
-            else {
+            } else {
                 // it's a function on the class
-                pred     = function (state, tr) {
-                    return pfn.call(this, state, tr);
-                };
+              pred = function (state, tr) {
+                return pfn.call(this, state, tr);
+              };
             }
           }
         }
@@ -608,8 +603,7 @@
           if (pred.call(test, state, tr)) {
             dests.push(tr);
           }
-        }
-        catch (e) {
+        } catch (e) {
           console.log(e);
         }
       });
@@ -632,8 +626,7 @@
         this.visited(this.get('state').get('name'));
         try {
           state.callOnEnter(test, dests[0]);
-        }
-        catch (e) {
+        } catch (e) {
           this.set('error', e);
           Log.error("Error calling on-enter trigger for: %s : %s<pre>%s</pre>", this.get('name'), e.message, e.stack);
           console.error(e);
@@ -651,9 +644,9 @@
 
     stepBack: function () {
       var test  = this.get('test'),
-          state = this.get('state'),
-          visited = this.get('visited'),
-          prev;
+        state = this.get('state'),
+        visited = this.get('visited'),
+        prev;
 
       if (visited.length < 2) {
         return this;
@@ -671,8 +664,7 @@
       try {
         // NB: there is predicate map to pass when we're stepping back...
         state.callOnEnter(test);
-      }
-      catch (e) {
+      } catch (e) {
         console.error(e);
         this.set('error', e);
         Log.error(e);
@@ -697,13 +689,14 @@
     },
 
     fail: function () {
-      var failedTests = models.suiteRunner.get('failedTests');
+      var failedTests = models.suiteRunner.get('failedTests'),
+        state;
       console.log('Failing test: ' + this.get('test').get('name'));
-      if (failedTests[failedTests.length-1] != this.get('test')) {
+      if (failedTests[failedTests.length - 1] !== this.get('test')) {
         models.suiteRunner.get('failedTests').push(this.get('test'));
       }
       this.trigger('change');
-      var state = this.get('test').getState('failure');
+      state = this.get('test').getState('failure');
       this.set('state', state);
       this.set('isDone', true);
       this.set('elapsedTime', this.elapsedTime());
@@ -751,8 +744,8 @@
 
     menuItemClicked: function (evt) {
       var target = $(evt.target),
-          item = target.attr('data-item'),
-          handler = item + 'Clicked';
+        item = target.attr('data-item'),
+        handler = item + 'Clicked';
 
       this.closeAllMenus();
 
@@ -770,8 +763,8 @@
 
     buttonClicked: function (evt) {
       var target = $(evt.target),
-          item = target.attr('data-item'),
-          handler = item + 'Clicked';
+        item = target.attr('data-item'),
+        handler = item + 'Clicked';
 
 
       if (this[handler]) {
@@ -792,7 +785,7 @@
 
     toggleDropdownMenu: function (evt) {
       var target = $(evt.target),
-          li = target.parent('li');
+        li = target.parent('li');
 
       evt.preventDefault();
 
@@ -1188,8 +1181,8 @@
    * View Helpers
    *
    ********************************************************************************/
-  Transition.addView = addView = function (name, clazz, appendToSelector, cdata, rdata) {
-    var view = new clazz(cdata);
+  Transition.addView = addView = function (name, Clazz, appendToSelector, cdata, rdata) {
+    var view = new Clazz(cdata);
     if (Transition.views[name]) {
       Transition.views[name].remove();
     }
@@ -1219,8 +1212,8 @@
     // throwing exceptions, it breaks the state machine / framework
     Transition.testRunner.transition();
     Transition.pollTimeoutId = setTimeout(
-        Transition.pollFn,
-        models.settings.get('pollTimeout')
+      Transition.pollFn,
+      models.settings.get('pollTimeout')
     );
   };
 
@@ -1238,7 +1231,7 @@
     Transition.runTest();
 
     Transition.suitePollFn = function () {
-      var currTest;
+      var currTest, failedTests, i;
       if (models.suiteRunner.get('stopSuite')) {
         Log.error('Suite halted.');
         Transition.suiteRunning = false;
@@ -1280,8 +1273,7 @@
         if (Transition.testRunner.succeeded()) {
           models.suiteRunner.set('numPassed', 1 + models.suiteRunner.get('numPassed'));
           Log.info('PASSED: %s', Transition.testRunner.get('test').get('name'));
-        }
-        else {
+        } else {
           models.suiteRunner.set('numFailed', 1 + models.suiteRunner.get('numFailed'));
           Log.error('FAILED: %s', Transition.testRunner.get('test').get('name'));
         }
@@ -1293,11 +1285,11 @@
         }
 
         Log.info('Suite Completed');
-        
+
         // Log out which tests failed (if any):
         if (models.suiteRunner.get('failedTests').length > 0) {
-          var failedTests = models.suiteRunner.get('failedTests');
-          for (var i = 0; i < failedTests.length; i++) {
+          failedTests = models.suiteRunner.get('failedTests');
+          for (i = 0; i < failedTests.length; i += 1) {
             Log.error(' --> ' + failedTests[i].attributes.name);
           }
           Log.error('\n\nThe following tests failed:');
@@ -1337,8 +1329,8 @@
     Transition.testRunner.set('testFinished', false);
     Transition.testRunner.set('testStarted', true);
     Transition.pollTimeoutId = setTimeout(
-        Transition.pollFn,
-        models.settings.get('pollTimeout')
+      Transition.pollFn,
+      models.settings.get('pollTimeout')
     );
   };
 
@@ -1381,8 +1373,8 @@
 
   Transition.cont = function () {
     Transition.pollTimeoutId = setTimeout(
-        Transition.pollFn,
-        models.settings.get('pollTimeout')
+      Transition.pollFn,
+      models.settings.get('pollTimeout')
     );
   };
 
@@ -1390,13 +1382,8 @@
    * Test Suite Management and Helpers
    *
    ********************************************************************************/
-  Transition.loadScript = function () {
-    var url, option;
-    url = arguments[0];
-    if (arguments.length > 1) {
-      option = arguments[1];
-    }
-    if ( ((option === "no-ci") && (Transition.models.suiteRunner.get('runningPhantom'))) || (option === "pending") ) {
+  Transition.loadScript = function (url, option) {
+    if (((option === "no-ci") && (Transition.models.suiteRunner.get('runningPhantom'))) || (option === "pending")) {
       console.log('Note: the following test was marked as pending: ' + url);
     } else {
       var testCount = Transition.models.suite.size(), lastModified, test;
@@ -1457,24 +1444,24 @@
 
   Transition.newState = function () {
     var args = [].slice.call(arguments),
-        stateName = args.shift(),
-        onEnter   = args.shift() || Transition.noop,
-        attrs     = args.shift() || {},
-        state = new TestState({
-      name:        stateName,
-      onEnter:     onEnter,
-      attrs:       attrs,
-      transitions: args || []
-    });
+      stateName = args.shift(),
+      onEnter   = args.shift() || Transition.noop,
+      attrs     = args.shift() || {},
+      state = new TestState({
+        name:        stateName,
+        onEnter:     onEnter,
+        attrs:       attrs,
+        transitions: args || []
+      });
     return state;
   };
 
   Transition.addTest = function (options) {
     try {
       var test = new Test(options),
-          existing = models.suite.find(function (t) {
-            return t.get('name') === test.get('name');
-          });
+        existing = models.suite.find(function (t) {
+          return t.get('name') === test.get('name');
+        });
 
       _.each(options, function (param, name) {
         if (typeof param === "function") {
@@ -1490,8 +1477,7 @@
 
       models.suite.add(test);
       return this;
-    }
-    catch (e) {
+    } catch (e) {
       Log.error("Error registering test: %s : %s<pre>%s</pre>", options.name, e.message, e.stack);
       console.error(e);
       console.log(e.message);
@@ -1511,10 +1497,9 @@
   Transition.find = function (selector) {
     try {
       var jq = parent.frames.main.jQuery || parent.frames.main.document.jQuery || parent.frames.main.window.jQuery || $(parent.frames.main.document),
-          result = jq(selector);
+        result = jq(selector);
       return result;
-    }
-    catch(e) {
+    } catch (e) {
       console.log(e);
     }
   };
@@ -1561,7 +1546,7 @@
     return nodes;
   };
 
-  Transition.clickAfter_ = function (selector) {
+  Transition.clickAfter_ = function (selector, ms) {
     return function () {
       var nodes = Transition.find(selector);
       setTimeout(nodes.click, ms);
@@ -1575,7 +1560,8 @@
       return url;
     }
 
-    return parent.main.window.location.href = url;
+    parent.main.window.location.href = url;
+    return parent.main.window.location.href;
   };
 
   Transition.navigateTo_ = function (url) {
@@ -1622,7 +1608,7 @@
 
   Transition.fillInWithKeyEvents = function (selector, text) {
     var ii, e, e2,
-        el = Transition.find(selector);
+      el = Transition.find(selector);
 
     for (ii = 0; ii < text.length; ii += 1) {
       e  = $.Event("keyup");
@@ -1639,8 +1625,8 @@
     return Transition.find("*contains(" + text + "):visible:last");
   };
 
-  Transition.findVisibleText_ = function(text) {
-    return function() {
+  Transition.findVisibleText_ = function (text) {
+    return function () {
       return Transition.findVisibleText(text);
     };
   };
@@ -1654,7 +1640,7 @@
       lower = 100 - upper;
       lower = Math.floor(lower);
     }
-    
+
     models.settings.set('frame-divider-upper-pct', upper);
     models.settings.set('frame-divider-lower-pct', lower);
     parent.frames.document.getElementsByTagName('frameset')[0].rows = upper + "%," + lower + "%";
@@ -1671,7 +1657,7 @@
 
   Transition.toggleControls = function () {
     var elt = $('a#hideShowControls'),
-        text = elt.text();
+      text = elt.text();
     if ('Hide' === text) {
       elt.text('Show');
       Transition.hideControls();
@@ -1688,7 +1674,7 @@
    ********************************************************************************/
   Transition.Log.newEntry = function (slevel, level, args) {
     var message, entry;
-    args[0] = args[0] + '';
+    args[0] = (typeof args === 'undefined') ? '' : args[0].toString();
     message = sprintf.apply(sprintf, args);
     entry = new LogEntry({
       slevel:      slevel,
