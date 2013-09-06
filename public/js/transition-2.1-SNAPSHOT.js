@@ -1755,6 +1755,7 @@
   Transition.Router = Backbone.Router.extend({
     routes: {
       "test/:name":     "showTest",
+      "test/:subdir/:name": "showTestInSubDir",
       "*any":           "main"
     },
 
@@ -1779,6 +1780,10 @@
         testRunner: Transition.testRunner
       });
 
+    },
+
+    showTestInSubDir: function (subdir, testName) {
+      return this.showTest(subdir + "/" + testName);
     },
 
     main: function () {
