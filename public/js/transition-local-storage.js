@@ -1,4 +1,4 @@
-/*jslint browser: true, maxerr: 50, indent: 2, nomen: false, regexp: false, newcap:false */
+/*jslint browser: true, maxerr: 50, indent: 2, nomen: true, regexp: false, newcap:false */
 /*global window, jQuery, _, Backbone, console, sprintf */
 "use strict";
 
