@@ -1445,7 +1445,7 @@
   Transition.newState = function () {
     var args = [].slice.call(arguments),
       stateName = args.shift(),
-      onEnter   = args.shift() || Transition.noop,
+      onEnter   = args.shift() || stateName || Transition.noop,
       attrs     = args.shift() || {},
       state = new TestState({
         name:        stateName,
