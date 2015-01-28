@@ -1290,7 +1290,11 @@
         if (models.suiteRunner.get('failedTests').length > 0) {
           failedTests = models.suiteRunner.get('failedTests');
           for (i = 0; i < failedTests.length; i += 1) {
-            Log.error(' --> ' + failedTests[i].attributes.name);
+            if (typeof failedTests[i].get('featureBranch') !== "undefined") {
+              Log.error('--> ' + failedTests[i].attributes.name + '<br />Feature branch: ' + failedTests[i].get('featureBranch'));
+            } else {
+              Log.error(' --> ' + failedTests[i].attributes.name);
+            }
           }
           Log.error('\n\nThe following tests failed:');
         }
@@ -1400,6 +1404,9 @@
             test.set('ciCompatible', true);
             test.set('lastModified', lastModified);
             test.set('lastModifiedTime', lastModified.getTime());
+            if (option && (typeof option.featureBranch !== "undefined")) {
+              test.set('featureBranch', option.featureBranch);
+            }
           }
         },
         error:    function (jqXHR, textStatus, errorThrown) {
