@@ -1502,9 +1502,16 @@
   };
 
   Transition.find = function (selector) {
+    var result, jq;
     try {
-      var jq = parent.frames.main.jQuery || parent.frames.main.document.jQuery || parent.frames.main.window.jQuery || $(parent.frames.main.document),
+      // Try to use the jQuery from the upper frame
+      jq = parent.frames.main.jQuery || parent.frames.main.document.jQuery || parent.frames.main.window.jQuery;
+      if (jq) {
         result = jq(selector);
+      } else {
+        // fall back to using the jQuery provided by the testing framework
+        result = jQuery(parent.frames.main.document).find(selector);
+      }
       return result;
     } catch (e) {
       console.log(e);
